@@ -1,0 +1,9 @@
+{
+	"name": "simplegen",
+	"description": "ololo",
+	"license": "GPL",
+	"copyright": "ololo",
+	"authors": ["LeMarwin"],
+	"targetPath": "bin",
+	"targetType" : "executable"
+}
