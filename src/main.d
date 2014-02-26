@@ -5,6 +5,7 @@ import std.string;
 import std.functional;
 
 import Gen.ExpTree;
+import Gen.CsvParse;
 
 double[] globalVars;
 
@@ -16,13 +17,10 @@ static double[] getVariables()
 int main()
 {
 	globalVars = [2,3];
-	typeof(new Leaf()) w = new Leaf();
-	Leaf a = new Leaf(3);
-	Leaf b = new Leaf();
-	Leaf q = new Leaf();
-	Plus c = new Plus(2);
-	//c.params = [q,b];
+	Expr c = getRandExpr(3);
 	writeln(c.eval());
 	writeln(c.print);
+	foreach(line;getData("testdata.csv"))
+		writeln(line);
 	return 0;
 }

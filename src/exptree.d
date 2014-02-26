@@ -15,9 +15,8 @@ interface Expr
 	string print();
 }
 
-static Expr getRandType(int depth)
+static Expr getRandExpr(int depth)
 {
-	writeln(depth);
 	int a;
 	if(depth>=1)
 		a = uniform!"[]"(0,5);
@@ -74,7 +73,7 @@ class Plus:Expr
 	}
 	void generate(int depth)
 	{
-		params = [getRandType(depth), getRandType(depth)];
+		params = [getRandExpr(depth), getRandExpr(depth)];
 	}
 	this(int depth)
 	{
@@ -96,7 +95,7 @@ class Minus:Expr
 	}
 	void generate(int depth)
 	{
-		params = [getRandType(depth), getRandType(depth)];
+		params = [getRandExpr(depth), getRandExpr(depth)];
 	}
 	this(int depth)
 	{
@@ -123,7 +122,7 @@ class Multiply:Expr
 	}
 	void generate(int depth)
 	{
-		params = [getRandType(depth), getRandType(depth)];
+		params = [getRandExpr(depth), getRandExpr(depth)];
 	}
 	this(int depth)
 	{
@@ -147,7 +146,7 @@ class Divide:Expr
 	}
 	void generate(int depth)
 	{
-		params = [getRandType(depth), getRandType(depth)];
+		params = [getRandExpr(depth), getRandExpr(depth)];
 	}
 	this(int depth)
 	{
@@ -217,7 +216,7 @@ class Sin:Expr
 	Expr param;
 	void generate(int depth)
 	{
-		param = getRandType(depth);
+		param = getRandExpr(depth);
 	}
 	this(int depth)
 	{
@@ -239,7 +238,7 @@ class Cos:Expr
 	Expr param;
 	void generate(int depth)
 	{
-		param = getRandType(depth);
+		param = getRandExpr(depth);
 	}
 	this(int depth)
 	{
@@ -261,7 +260,7 @@ class Sqr:Expr
 	Expr param;
 	void generate(int depth)
 	{
-		param = getRandType(depth);
+		param = getRandExpr(depth);
 	}
 	this(int depth)
 	{
@@ -284,7 +283,7 @@ class Sqrt:Expr
 	Expr param;
 	void generate(int depth)
 	{
-		param = getRandType(depth);
+		param = getRandExpr(depth);
 	}
 	this(int depth)
 	{
