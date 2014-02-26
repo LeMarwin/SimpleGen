@@ -1,0 +1,23 @@
+1. Add fittness-function.
+	Deadline 	-	04.03
+	Optimistic	-	28.02
+
+2. Add uniform distribution over expr-tree
+	Deadline	-	10.03
+	Optimistic	-	05.03
+
+3. Add crossingover and mutation.
+	Deadline	-	14.03
+	Optimistic	-	06.03
+
+4. Add population-related stuff:
+	Deadline 	-	22.03
+	Optimistic	-	10.03
+
+5. Polishing and finalising
+	Deadline	-	27.03
+	Optimistic	-	12.03
+
+6. Simple GUI: plots and datafile dialogs
+	Deadline	-	12.04
+	Optimistic	-	27.03
