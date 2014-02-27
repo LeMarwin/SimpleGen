@@ -20,7 +20,8 @@ int main()
 	Expr c = getRandExpr(3);
 	writeln(c.eval());
 	writeln(c.print);
-	foreach(line;getData("testdata.csv"))
-		writeln(line);
+	writeln(c.offsprings);
+	/*foreach(line;getData("testdata.csv"))
+		writeln(line);*/
 	return 0;
 }

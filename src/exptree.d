@@ -13,7 +13,9 @@ interface Expr
 	double eval();
 	void generate(int depth);
 	string print();
+	int offsprings();
 }
+
 
 static Expr getRandExpr(int depth)
 {
@@ -62,6 +64,7 @@ class Plus:Expr
 {
 	static string name = "+";
 	Expr[] params;
+	int offs;
 	double eval()
 	{
 		double s = 0;
@@ -74,6 +77,7 @@ class Plus:Expr
 	void generate(int depth)
 	{
 		params = [getRandExpr(depth), getRandExpr(depth)];
+		offs = 1 + params[0].offsprings + params[1].offsprings;
 	}
 	this(int depth)
 	{
@@ -83,12 +87,15 @@ class Plus:Expr
 	{
 		return "(" ~ name ~ " " ~ params[0].print ~ " " ~ params[1].print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Minus:Expr
 {
 	static string name = "-";
 	Expr[] params;
+	int offs;
 	double eval()
 	{
 		return params[0].eval - params[1].eval;
@@ -96,6 +103,7 @@ class Minus:Expr
 	void generate(int depth)
 	{
 		params = [getRandExpr(depth), getRandExpr(depth)];
+		offs = 1 + params[0].offsprings + params[1].offsprings;
 	}
 	this(int depth)
 	{
@@ -105,12 +113,15 @@ class Minus:Expr
 	{
 		return "(" ~ name ~ " "  ~ params[0].print ~ " " ~ params[1].print ~ ")";
 	}
+	int offsprings()
+		{return offs;}	
 }
 
 class Multiply:Expr
 {
 	static string name = "*";
 	Expr[] params;
+	int offs;
 	double eval()
 	{
 		double s = 1;
@@ -123,6 +134,7 @@ class Multiply:Expr
 	void generate(int depth)
 	{
 		params = [getRandExpr(depth), getRandExpr(depth)];
+		offs = 1 + params[0].offsprings + params[1].offsprings;
 	}
 	this(int depth)
 	{
@@ -132,12 +144,15 @@ class Multiply:Expr
 	{
 		return "(" ~ name ~ " "  ~ params[0].print ~ " " ~ params[1].print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Divide:Expr
 {
 	static string name = "/";
 	Expr[] params;
+	int offs;
 	double eval()
 	{
 		if(params[1].eval==0)
@@ -147,6 +162,7 @@ class Divide:Expr
 	void generate(int depth)
 	{
 		params = [getRandExpr(depth), getRandExpr(depth)];
+		offs = 1 + params[0].offsprings + params[1].offsprings;
 	}
 	this(int depth)
 	{
@@ -156,6 +172,8 @@ class Divide:Expr
 	{
 		return "(" ~ name ~ " "  ~ params[0].print ~ " " ~ params[1].print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Leaf:Expr
@@ -183,6 +201,8 @@ class Leaf:Expr
 	{
 		return name;
 	}
+	int offsprings()
+	{return 1;}
 }
 
 class Var : Expr
@@ -208,15 +228,19 @@ class Var : Expr
 	{
 		return name;
 	}
+	int offsprings()
+		{return 1;}
 }
 
 class Sin:Expr
 {
 	static string name = "sin";
 	Expr param;
+	int offs;
 	void generate(int depth)
 	{
 		param = getRandExpr(depth);
+		offs = 1 + param.offsprings;
 	}
 	this(int depth)
 	{
@@ -230,15 +254,19 @@ class Sin:Expr
 	{
 		return "(" ~ name ~ " "  ~ param.print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Cos:Expr
 {
 	static string name = "cos";
 	Expr param;
+	int offs;
 	void generate(int depth)
 	{
 		param = getRandExpr(depth);
+		offs = 1 + param.offsprings;
 	}
 	this(int depth)
 	{
@@ -252,15 +280,19 @@ class Cos:Expr
 	{
 		return "(" ~ name ~ " "  ~ param.print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Sqr:Expr
 {
 	static string name = "sqr";
 	Expr param;
+	int offs;
 	void generate(int depth)
 	{
 		param = getRandExpr(depth);
+		offs = 1 + param.offsprings;
 	}
 	this(int depth)
 	{
@@ -275,15 +307,19 @@ class Sqr:Expr
 	{
 		return "(" ~ name ~ " "  ~ param.print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }
 
 class Sqrt:Expr
 {
 	static string name = "sqrt";
 	Expr param;
+	int offs;
 	void generate(int depth)
 	{
 		param = getRandExpr(depth);
+		offs = 1 + param.offsprings;
 	}
 	this(int depth)
 	{
@@ -297,4 +333,6 @@ class Sqrt:Expr
 	{
 		return "(" ~ name ~ " "  ~ param.print ~ ")";
 	}
+	int offsprings()
+		{return offs;}
 }

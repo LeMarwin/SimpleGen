@@ -1,3 +1,6 @@
+Right now - stage 1.
+Gotta add fittnes-function, population and think about unif over graf
+
 1. Add fittness-function.
 	Deadline 	-	04.03
 	Optimistic	-	28.02
