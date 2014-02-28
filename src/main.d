@@ -17,11 +17,9 @@ static double[] getVariables()
 int main()
 {
 	globalVars = [2,3];
-	Expr c = getRandExpr(3);
+	Expr c = getRandExpr(2);
 	writeln(c.eval());
 	writeln(c.print);
 	writeln(c.offsprings);
-	/*foreach(line;getData("testdata.csv"))
-		writeln(line);*/
 	return 0;
 }

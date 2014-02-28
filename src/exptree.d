@@ -17,7 +17,6 @@ interface Expr
 	Expr pickRand();
 }
 
-
 static Expr getRandExpr(int depth)
 {
 	int a;
