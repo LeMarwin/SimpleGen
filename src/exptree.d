@@ -14,6 +14,7 @@ interface Expr
 	void generate(int depth);
 	string print();
 	int offsprings();
+	Expr pickRand();
 }
 
 
@@ -89,6 +90,28 @@ class Plus:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(params[0].offsprings>params[1].offsprings)
+		{
+			a = 1;
+			b = 0;			
+		}
+		if(t<1.0/offs)
+		{
+			return this;
+		}
+		else if(t<cast(double)(params[a].offsprings+1)/offsprings)
+		{
+			return params[a].pickRand;
+		}
+		else
+		{
+			return params[b].pickRand;
+		}
+	}
 }
 
 class Minus:Expr
@@ -115,6 +138,28 @@ class Minus:Expr
 	}
 	int offsprings()
 		{return offs;}	
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(params[0].offsprings>params[1].offsprings)
+		{
+			a = 1;
+			b = 0;			
+		}
+		if(t<1.0/offs)
+		{
+			return this;
+		}
+		else if(t<cast(double)(params[a].offsprings+1)/offsprings)
+		{
+			return params[a].pickRand;
+		}
+		else
+		{
+			return params[b].pickRand;
+		}
+	}
 }
 
 class Multiply:Expr
@@ -146,6 +191,28 @@ class Multiply:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(params[0].offsprings>params[1].offsprings)
+		{
+			a = 1;
+			b = 0;			
+		}
+		if(t<1.0/offs)
+		{
+			return this;
+		}
+		else if(t<cast(double)(params[a].offsprings+1)/offsprings)
+		{
+			return params[a].pickRand;
+		}
+		else
+		{
+			return params[b].pickRand;
+		}
+	}
 }
 
 class Divide:Expr
@@ -174,6 +241,28 @@ class Divide:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(params[0].offsprings>params[1].offsprings)
+		{
+			a = 1;
+			b = 0;			
+		}
+		if(t<1.0/offs)
+		{
+			return this;
+		}
+		else if(t<cast(double)(params[a].offsprings+1)/offsprings)
+		{
+			return params[a].pickRand;
+		}
+		else
+		{
+			return params[b].pickRand;
+		}
+	}
 }
 
 class Leaf:Expr
@@ -203,9 +292,11 @@ class Leaf:Expr
 	}
 	int offsprings()
 	{return 1;}
+	Expr pickRand()
+	{return this;}
 }
 
-class Var : Expr
+class Var:Expr
 {
 	int num;
 	double[] variables;
@@ -230,6 +321,10 @@ class Var : Expr
 	}
 	int offsprings()
 		{return 1;}
+	Expr pickRand()
+	{
+		return this;
+	}
 }
 
 class Sin:Expr
@@ -256,6 +351,15 @@ class Sin:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(t<1.0/offs)
+			return this;
+		else
+			return param.pickRand;
+	}
 }
 
 class Cos:Expr
@@ -282,6 +386,15 @@ class Cos:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(t<1.0/offs)
+			return this;
+		else
+			return param.pickRand;
+	}
 }
 
 class Sqr:Expr
@@ -309,6 +422,15 @@ class Sqr:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(t<1.0/offs)
+			return this;
+		else
+			return param.pickRand;
+	}
 }
 
 class Sqrt:Expr
@@ -335,4 +457,13 @@ class Sqrt:Expr
 	}
 	int offsprings()
 		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(t<1.0/offs)
+			return this;
+		else
+			return param.pickRand;
+	}
 }
