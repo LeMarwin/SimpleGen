@@ -1,4 +1,0 @@
-{
-	"cmd": ["dmd main.d exprtree.d -of../bin/"],
-	"showWhenFinished" : "true"
-}
