@@ -308,7 +308,7 @@ class Var:Expr
 	}
 	double eval()
 	{
-		return variables[num];
+		return getVariables()[num];
 	}
 	this()
 	{

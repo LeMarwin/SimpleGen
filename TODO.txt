@@ -6,6 +6,7 @@ Gotta add fittnes-function, population and think about unif over graf
 	Optimistic	-	28.02
 
 2. Add uniform distribution over expr-tree
+	DONE		-	28.02
 	Deadline	-	10.03
 	Optimistic	-	05.03
 
