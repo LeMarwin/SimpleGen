@@ -11,4 +11,6 @@ class Indi
 	{
 		
 	}
+	void mutate();
+	Expr pickRand();
 }
