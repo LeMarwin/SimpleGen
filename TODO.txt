@@ -1,5 +1,5 @@
-Right now - stage 1.
-Gotta add fittnes-function, population and think about unif over graf
+Right now - stage 2.
+No population, but have fittness-function and uniform distribution.
 
 1. Add fittness-function.
 	Deadline 	-	04.03
