@@ -6,6 +6,8 @@ import std.mathspecial;
 import std.math;
 import std.stdio;
 import std.conv;
+
+import Gen.Indi;
 import Gen.Main;
 
 interface Expr
@@ -298,12 +300,10 @@ class Leaf:Expr
 class Var:Expr
 {
 	int num;
-	double[] variables;
 	string name;
 	void generate(int depth)
 	{
-		variables = getVariables();
-		num = uniform!"[)"(0,variables.length);
+		num = uniform!"[)"(0,getVariables().length);
 		name = "X"~to!string(num);
 	}
 	double eval()

@@ -7,6 +7,7 @@ import std.math;
 
 import Gen.ExpTree;
 import Gen.CsvParse;
+import Gen.Indi;
 
 double[] globalVars;
 
@@ -41,5 +42,7 @@ int main()
 	writeln(c.print);
 	writeln(c.offsprings);
 	writeln(fittness(data, c));
+	Indi jones = new Indi(c);
+	writeln(jones.fittness(data));
 	return 0;
 }
