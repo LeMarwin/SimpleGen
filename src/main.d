@@ -32,6 +32,5 @@ int main()
 	writeln(jones.fittness(data));
 	writeln(jones.pickRand().print);
 	*/
-
 	return 0;
 }

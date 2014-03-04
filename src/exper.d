@@ -95,10 +95,6 @@ abstract class Exper:Expr_Int
 		writeln(buff);
 		return this;
 	}
-	this()
-	{
-
-	}
 }
 
 class Plus:Exper
