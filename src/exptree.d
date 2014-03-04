@@ -12,7 +12,7 @@ import Gen.Main;
 
 interface Expr
 {
-	double eval();
+	double eval(double[] vars);
 	void generate(int depth);
 	string print();
 	int offsprings();
@@ -23,7 +23,7 @@ static Expr getRandExpr(int depth)
 {
 	int a;
 	if(depth>=1)
-		a = uniform!"[]"(0,5);
+		a = uniform!"[]"(0,10);
 	else
 		a = uniform!"[]"(0,1);
 
@@ -59,6 +59,9 @@ static Expr getRandExpr(int depth)
 		case 9:
 			return new Sqrt(depth-1);
 			break;
+		case 10:
+			return new Pow(depth-1);
+			break;
 	}
 }
 
@@ -67,12 +70,12 @@ class Plus:Expr
 	static string name = "+";
 	Expr[] params;
 	int offs;
-	double eval()
+	double eval(double[] vars)
 	{
 		double s = 0;
 		foreach(p;params)
 		{
-			s+=p.eval;
+			s+=p.eval(vars);
 		}
 		return s;
 	}
@@ -120,9 +123,9 @@ class Minus:Expr
 	static string name = "-";
 	Expr[] params;
 	int offs;
-	double eval()
+	double eval(double[] vars)
 	{
-		return params[0].eval - params[1].eval;
+		return params[0].eval(vars) - params[1].eval(vars);
 	}
 	void generate(int depth)
 	{
@@ -168,12 +171,12 @@ class Multiply:Expr
 	static string name = "*";
 	Expr[] params;
 	int offs;
-	double eval()
+	double eval(double[] vars)
 	{
 		double s = 1;
 		foreach(p;params)
 		{
-			s*=p.eval;
+			s*=p.eval(vars);
 		}
 		return s;
 	}
@@ -221,11 +224,12 @@ class Divide:Expr
 	static string name = "/";
 	Expr[] params;
 	int offs;
-	double eval()
+	double eval(double[] vars)
 	{
-		if(params[1].eval==0)
+		double t = params[1].eval(vars);
+		if(t==0)
 			return 0;
-		else return params[0].eval/params[1].eval;
+		else return params[0].eval(vars)/t;
 	}
 	void generate(int depth)
 	{
@@ -270,7 +274,7 @@ class Leaf:Expr
 {
 	double value;
 	string name;
-	double eval()
+	double eval(double[] vars)
 	{
 		return value;
 	}
@@ -306,9 +310,9 @@ class Var:Expr
 		num = uniform!"[)"(0,getVariables().length);
 		name = "X"~to!string(num);
 	}
-	double eval()
+	double eval(double[] vars)
 	{
-		return getVariables()[num];
+		return vars[num];
 	}
 	this()
 	{
@@ -340,9 +344,9 @@ class Sin:Expr
 	{
 		this.generate(depth);
 	}
-	double eval()
+	double eval(double[] vars)
 	{
-		return sin(param.eval);
+		return sin(param.eval(vars));
 	}
 	string print()
 	{
@@ -375,9 +379,9 @@ class Cos:Expr
 	{
 		this.generate(depth);
 	}
-	double eval()
+	double eval(double[] vars)
 	{
-		return cos(param.eval);
+		return cos(param.eval(vars));
 	}
 	string print()
 	{
@@ -410,9 +414,9 @@ class Sqr:Expr
 	{
 		this.generate(depth);
 	}
-	double eval()
+	double eval(double[] vars)
 	{
-		double t = param.eval;
+		double t = param.eval(vars);
 		return t*t;
 	}
 	string print()
@@ -446,9 +450,9 @@ class Sqrt:Expr
 	{
 		this.generate(depth);
 	}
-	double eval()
+	double eval(double[] vars)
 	{
-		return sqrt(param.eval);
+		return sqrt(param.eval(vars));
 	}
 	string print()
 	{
@@ -464,5 +468,53 @@ class Sqrt:Expr
 			return this;
 		else
 			return param.pickRand;
+	}
+}
+
+class Pow:Expr
+{
+	static string name = "^";
+	Expr[] params;
+	int offs;
+	double eval(double[] vars)
+	{
+		return params[0].eval(vars)^^params[1].eval(vars);
+	}
+	void generate(int depth)
+	{
+		params = [getRandExpr(depth), getRandExpr(depth)];
+		offs = 1 + params[0].offsprings + params[1].offsprings;
+	}
+	this(int depth)
+	{
+		this.generate(depth);
+	}
+	string print()
+	{
+		return "(" ~ name ~ " " ~ params[0].print ~ " " ~ params[1].print ~ ")";
+	}
+	int offsprings()
+		{return offs;}
+	Expr pickRand()
+	{
+		double t = uniform!"[]"(0.0,1.0);
+		int a = 0, b = 1;
+		if(params[0].offsprings>params[1].offsprings)
+		{
+			a = 1;
+			b = 0;			
+		}
+		if(t<1.0/offs)
+		{
+			return this;
+		}
+		else if(t<cast(double)(params[a].offsprings+1)/offsprings)
+		{
+			return params[a].pickRand;
+		}
+		else
+		{
+			return params[b].pickRand;
+		}
 	}
 }

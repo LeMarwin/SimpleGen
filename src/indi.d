@@ -3,11 +3,14 @@ module Gen.Indi;
 import std.stdio;
 import Gen.ExpTree;
 
+
 class Indi
 {
 	Expr f;
-	double eval()
-	{return f.eval;}
+	int depth;
+
+	double eval(double[] vars)
+	{return f.eval(vars);}
 	int offsprings()
 	{return f.offsprings;}
 	double[] variables;
@@ -22,9 +25,8 @@ class Indi
 		{
 			variables = buff[i][0..$-1];
 			ans = buff[i][$-1];
-			double delta = f.eval-ans;
+			double delta = f.eval(variables)-ans;
 			mse+=delta*delta;
-			writeln(variables,"\t",f.eval);
 		}
 		return mse/data.length;
 	}
@@ -32,6 +34,12 @@ class Indi
 	{
 		f = _f;
 	}
-	void mutate(){};
-	Expr pickRand(){return getRandExpr(0);}
+	this(int _d)
+	{
+		depth = _d;
+		f = getRandExpr(depth);
+	}
+	void mutate(){
+	};
+	Expr pickRand(){return f.pickRand();}
 }
