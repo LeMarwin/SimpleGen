@@ -1,14 +1,4 @@
-Right now - stage 2.
-No population, but have fittness-function and uniform distribution.
-
-1. Add fittness-function.
-	Deadline 	-	04.03
-	Optimistic	-	28.02
-
-2. Add uniform distribution over expr-tree
-	DONE		-	28.02
-	Deadline	-	10.03
-	Optimistic	-	05.03
+Have mutation, but no crossingover;
 
 3. Add crossingover and mutation.
 	Deadline	-	14.03

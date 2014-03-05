@@ -22,7 +22,15 @@ static Expr getRandExpr(int depth)
 	if(depth == 0)
 		a = uniform!"[]"(0,1);
 	else
-		a = uniform!"[]"(0,5);
+	{
+		a = uniform!"[]"(0,1);
+		if(a==0)
+		{
+			a = uniform!"[]"(0,10);
+		}
+	}
+
+// ^ done so there will be more final nodes, than non-final nodes
 
 	final switch(a)
 	{
@@ -69,6 +77,7 @@ interface Expr_Int
 	string print();
 	string name();
 	int offsprings();
+	int height();
 	ED pickRand(int d);
 }
 
@@ -80,14 +89,24 @@ abstract class Expr:Expr_Int
 	void generate(int depth)
 	{
 		params = [];
+		offs = 0;
 		for(int i=0;i<p_num;i++)
 		{
 			params~=getRandExpr(depth);
-			offs+=params[$-1].offsprings;
+			offs+=params[i].offsprings;
 		}
 		offs++;
 	}
-
+	int recalcOffs()
+	{
+		offs = 0;
+		for(int i=0;i<p_num;i++)
+		{
+			offs+=params[i].recalcOffs;
+		}
+		offs++;
+		return offs;
+	}
 	this(int depth)
 	{
 		this.generate(depth);
@@ -132,6 +151,19 @@ abstract class Expr:Expr_Int
 				return p.pickRand(d+1);
 		}
 		return ED(this,d);
+	}
+	int height()
+	{
+		if(p_num==0)
+			return 0;
+		int res = params[0].height;
+		foreach(p;params[1..$])
+		{
+			int temp = p.height;
+			if(res<temp)
+				res = temp;
+		}
+		return res+1;
 	}
 	this()
 	{

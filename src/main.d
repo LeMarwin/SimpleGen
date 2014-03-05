@@ -27,9 +27,13 @@ int main()
 	writeln("mutation:");
 	jones.mutate();
 	writeln(jones.print);
-	writeln(jones.offsprings);
+	writeln("offsprings = ", jones.offsprings);
 	writeln("========================================================");
 	writeln("\nfittness = ", jones.fittness(data));
+	
+	Expr w = jones.pickRand.node;
+	writeln(w.print, "\t", w.height);
+
 
 /*	Uniform over graph testing
 	int[Expr] test;
