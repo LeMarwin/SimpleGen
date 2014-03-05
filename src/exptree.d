@@ -8,7 +8,7 @@ import std.stdio;
 import std.conv;
 
 import Gen.Indi;
-import Gen.Main;
+//import Gen.Main;
 
 interface Expr
 {

@@ -1,21 +1,28 @@
 module Gen.Indi;
 
 import std.stdio;
-import Gen.ExpTree;
+import Gen.ExprTree;
+import Gen.Main;
 
 
 class Indi
 {
 	Expr f;
+	double[] variables;
 	int depth;
 
 	double eval(double[] vars)
-	{return f.eval(vars);}
+	{
+		return f.eval(vars);
+	}
 	int offsprings()
-	{return f.offsprings;}
-	double[] variables;
+	{
+		return f.offsprings;
+	}
 	double[] getVariables()
-	{return variables;}
+	{
+		return variables;
+	}
 	double fittness(double[][] data)
 	{
 		double[][] buff = data.dup;
@@ -39,7 +46,17 @@ class Indi
 		depth = _d;
 		f = getRandExpr(depth);
 	}
-	void mutate(){
-	};
-	Expr pickRand(){return f.pickRand();}
+	void mutate()
+	{
+		ED temp = f.pickRand(0);
+		temp.node.generate(MAX_DEPTH-temp.depth);
+	}
+	ED pickRand()
+	{
+		return f.pickRand(0);
+	}
+	string print()
+	{
+		return f.print;	
+	}
 }
