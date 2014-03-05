@@ -6,17 +6,9 @@ import std.functional;
 import std.math;
 import std.typecons;
 
-//import Gen.ExpTree;
 import Gen.CsvParse;
 import Gen.Indi;
 import Gen.ExprTree;
-
-double[] globalVars;
-
-static double[] getVariables()
-{
-	return globalVars;
-}
 
 int VAR_NUM;
 int MAX_DEPTH=5;
