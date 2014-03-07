@@ -29,10 +29,11 @@ int main()
 	writeln(jones.print);
 	writeln("offsprings = ", jones.offsprings);
 	writeln("========================================================");
-	writeln("\nfittness = ", jones.fittness(data));
-	
+	writeln("fittness = ", jones.fittness(data));
+	writeln("========================================================");
+
 	Expr w = jones.pickRand.node;
-	writeln(w.print, "\t", w.height);
+	writeln(w.print, "\t", w.height, "\t" w.parent.print);
 
 
 /*	Uniform over graph testing

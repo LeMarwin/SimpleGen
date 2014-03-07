@@ -50,7 +50,7 @@ class Indi
 	{
 		ED temp = f.pickRand(0);
 		temp.node.generate(MAX_DEPTH-temp.depth);
-		f.recalcOffs();
+		f.recalcInnerParams();
 	}
 	ED pickRand()
 	{

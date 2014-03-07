@@ -30,7 +30,7 @@ static Expr getRandExpr(int depth)
 		}
 	}
 
-// ^ done so there will be more final nodes, than non-final nodes
+ 	// ^ done so there will be more final nodes, than non-final nodes
 
 	final switch(a)
 	{
@@ -86,6 +86,7 @@ abstract class Expr:Expr_Int
 	int p_num;
 	Expr[] params=[];
 	int offs;
+	Expr parent;
 	void generate(int depth)
 	{
 		params = [];
@@ -97,12 +98,13 @@ abstract class Expr:Expr_Int
 		}
 		offs++;
 	}
-	int recalcOffs()
+	int recalcInnerParams(Expr par = null)
 	{
+		parent = par;
 		offs = 0;
 		for(int i=0;i<p_num;i++)
 		{
-			offs+=params[i].recalcOffs;
+			offs+=params[i].recalcInnerParams(this);
 		}
 		offs++;
 		return offs;
