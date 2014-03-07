@@ -11,18 +11,17 @@ import Gen.Indi;
 import Gen.ExprTree;
 
 int VAR_NUM;
-int MAX_DEPTH=5;
+int MAX_DEPTH=3;
 
 int main()
 {
 	double[][] data = getData("testdata.csv");
 	VAR_NUM = data[0].length - 1;
-	Expr a = new Plus(MAX_DEPTH);
-	Indi jones = new Indi(a);
+	Indi jones = new Indi(MAX_DEPTH);
 
 	writeln("========================================================");
-	writeln(a.print);
-	writeln("offsprings = ", a.offsprings);
+	writeln(jones.a.print);
+	writeln("offsprings = ", jones.a.offsprings);
 	writeln("--------------------------------------------------------");
 	writeln("mutation:");
 	jones.mutate();
@@ -33,7 +32,7 @@ int main()
 	writeln("========================================================");
 
 	Expr w = jones.pickRand.node;
-	writeln(w.print, "\t", w.height, "\t" w.parent.print);
+	writeln(jones.print);
 
 
 /*	Uniform over graph testing

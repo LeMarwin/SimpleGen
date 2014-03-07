@@ -87,6 +87,7 @@ abstract class Expr:Expr_Int
 	Expr[] params=[];
 	int offs;
 	Expr parent;
+	int mynum;
 	void generate(int depth)
 	{
 		params = [];
@@ -98,13 +99,21 @@ abstract class Expr:Expr_Int
 		}
 		offs++;
 	}
-	int recalcInnerParams(Expr par = null)
+	int recalcInnerParams(Expr par = null, int n = 0)
 	{
-		parent = par;
+		if(par is null)
+		{
+			parent = this;
+		}
+		else
+		{
+			parent = par;
+		}
+		mynum = n;
 		offs = 0;
 		for(int i=0;i<p_num;i++)
 		{
-			offs+=params[i].recalcInnerParams(this);
+			offs+=params[i].recalcInnerParams(this, i);
 		}
 		offs++;
 		return offs;

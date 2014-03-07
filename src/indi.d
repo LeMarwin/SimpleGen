@@ -40,11 +40,13 @@ class Indi
 	this(Expr _f)
 	{
 		f = _f;
+		f.recalcInnerParams();
 	}
 	this(int _d)
 	{
 		depth = _d;
 		f = getRandExpr(depth);
+		f.recalcInnerParams();
 	}
 	void mutate()
 	{
