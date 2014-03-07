@@ -23,7 +23,7 @@ static Expr getRandExpr(int depth)
 		a = uniform!"[]"(0,1);
 	else
 	{
-		a = uniform!"[]"(0,1);
+		a = uniform!"[]"(0,2);
 		if(a==0)
 		{
 			a = uniform!"[]"(0,10);
@@ -77,17 +77,19 @@ interface Expr_Int
 	string print();
 	string name();
 	int offsprings();
-	int height();
+	int calcHeight();
 	ED pickRand(int d);
 }
 
 abstract class Expr:Expr_Int
-{
-	int p_num;
+{	
 	Expr[] params=[];
-	int offs;
 	Expr parent;
+	int p_num;
+	int offs;
 	int mynum;
+	int depth;
+	int height;
 	void generate(int depth)
 	{
 		params = [];
@@ -99,23 +101,22 @@ abstract class Expr:Expr_Int
 		}
 		offs++;
 	}
-	int recalcInnerParams(Expr par = null, int n = 0)
+	int recalcInnerParams(Expr par = null, int n = 0, int d = 0)
 	{
 		if(par is null)
-		{
 			parent = this;
-		}
 		else
-		{
 			parent = par;
-		}
+
 		mynum = n;
+		depth = d;
 		offs = 0;
 		for(int i=0;i<p_num;i++)
 		{
-			offs+=params[i].recalcInnerParams(this, i);
+			offs+=params[i].recalcInnerParams(this, i, d+1);
 		}
 		offs++;
+		height = calcHeight;
 		return offs;
 	}
 	this(int depth)
@@ -163,7 +164,7 @@ abstract class Expr:Expr_Int
 		}
 		return ED(this,d);
 	}
-	int height()
+	int calcHeight()
 	{
 		if(p_num==0)
 			return 0;
@@ -175,6 +176,18 @@ abstract class Expr:Expr_Int
 				res = temp;
 		}
 		return res+1;
+	}
+
+	Expr[] getNiceNodes(int d, int h)
+	{
+		Expr[] acc = [];
+		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+		{
+			acc~=[this];
+		}
+		foreach(p;params)
+			acc~=p.getNiceNodes(d,h);
+		return acc;
 	}
 	this()
 	{
@@ -218,6 +231,13 @@ class Leaf:Expr
 		offs = 1;
 		this.generate(0);
 	}
+	override Expr[] getNiceNodes(int d, int h)
+	{
+		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+			return [this];
+		else
+			return [];
+	}
 }
 
 class Var:Expr
@@ -234,6 +254,13 @@ class Var:Expr
 	double eval(double[] variables)
 	{
 		return variables[num];
+	}
+	override Expr[] getNiceNodes(int d, int h)
+	{
+		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+			return [this];
+		else
+			return [];
 	}
 	this()
 	{

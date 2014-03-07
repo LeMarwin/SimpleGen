@@ -11,7 +11,7 @@ import Gen.Indi;
 import Gen.ExprTree;
 
 int VAR_NUM;
-int MAX_DEPTH=3;
+int MAX_DEPTH=5;
 
 int main()
 {
@@ -20,8 +20,8 @@ int main()
 	Indi jones = new Indi(MAX_DEPTH);
 
 	writeln("========================================================");
-	writeln(jones.a.print);
-	writeln("offsprings = ", jones.a.offsprings);
+	writeln(jones.f.print);
+	writeln("offsprings = ", jones.f.offsprings);
 	writeln("--------------------------------------------------------");
 	writeln("mutation:");
 	jones.mutate();
@@ -33,6 +33,18 @@ int main()
 
 	Expr w = jones.pickRand.node;
 	writeln(jones.print);
+	writeln(w.print);
+	writeln(w.depth, "\t", w.height);
+
+	int d = 1, h = 2;
+	Expr[] nicenode = jones.f.getNiceNodes(d,h);
+	writeln("Depth = ",jones.depth,"\tMax depth = ", MAX_DEPTH);
+	writeln("(d0,h0) = (",d,",",h,")");
+	writeln("(m-h0,m-d0) = ","(",MAX_DEPTH-h,",",MAX_DEPTH-d,")" );
+	foreach(nn;nicenode)
+	{
+		writeln("(",nn.depth,",",nn.height,")");
+	}
 
 
 /*	Uniform over graph testing
