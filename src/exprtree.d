@@ -23,8 +23,7 @@ static Expr getRandExpr(int depth)
 		a = uniform!"[]"(0,1);
 	else
 	{
-		a = uniform!"[]"(0,2);
-		if(a==0)
+		if(uniform!"[]"(0.0,1.0)>0.3)
 		{
 			a = uniform!"[]"(0,10);
 		}

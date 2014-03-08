@@ -44,8 +44,7 @@ class Indi
 	}
 	this(int _d)
 	{
-		depth = _d;
-		f = getRandExpr(depth);
+		f = getRandExpr(_d);
 		f.recalcInnerParams();
 	}
 	void mutate()
@@ -61,5 +60,9 @@ class Indi
 	string print()
 	{
 		return f.print;	
+	}
+	int height()
+	{
+		return f.height;
 	}
 }
