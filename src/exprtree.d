@@ -102,10 +102,13 @@ abstract class Expr:Expr_Int
 	}
 	int recalcInnerParams(Expr par = null, int n = 0, int d = 0)
 	{
+
 		if(par is null)
 			parent = this;
 		else
 			parent = par;
+
+		//parent = par; //!!!
 
 		mynum = n;
 		depth = d;

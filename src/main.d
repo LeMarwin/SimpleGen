@@ -12,7 +12,14 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=10;
+int MAX_DEPTH=4;
+
+void exch(ref Indi a, ref Indi b)
+{
+	Indi c = a;
+	a = b;
+	b = c;
+}
 
 int main()
 {
@@ -21,8 +28,6 @@ int main()
 	Indi indiana = new Indi(MAX_DEPTH);
 	Indi jones = new Indi(MAX_DEPTH);
 
-	Expr a = getRandExpr(MAX_DEPTH);
-	a.recalcInnerParams();
 /*
 	writeln("========================================================");
 	writeln(jones.f.print);
@@ -36,7 +41,6 @@ int main()
 	writeln("fittness = ", jones.fittness(data));
 	writeln("========================================================");
 */ 
-	//writeln(a.print);
 	
 	writeln("========================================================");
 	writeln(indiana.print);
@@ -45,21 +49,18 @@ int main()
 	writeln("========================================================");
 
 
-	Expr q = indiana.pickRand.node;
-	Expr w = jones.pickRand.node;
-	Indi buff = indiana;
-	indiana = jones;
-	jones = buff;
-	writeln(indiana.print);
-	writeln("--------------------------------------------------------");
-	writeln(jones.print);
-	writeln("========================================================");
-/*
-	Indi[] nexgen = crossover([indiana,jones]);
+//	Expr q = indiana.pickRand.node;
+//	Expr w = jones.pickRand.node;
+//	Indi buff = indiana;
+//	indiana = jones;
+//	jones = buff;
+
+
+	Indi[] nexgen = [indiana, jones];	// = crossover([indiana,jones]);
+	crossover(nexgen);
 	nexgen[0].f.recalcInnerParams();
 	nexgen[1].f.recalcInnerParams();
 	writeln("--------------------------------------------------------");
-
 	writeln(nexgen[0].print,"\t",nexgen[0].f.height);
 	writeln(nexgen[1].print,"\t",nexgen[0].f.height);
 
