@@ -189,6 +189,8 @@ abstract class Expr:Expr_Int
 		}
 		foreach(p;params)
 			acc~=p.getNiceNodes(d,h);
+		if(acc.length==0)
+			return [this];
 		return acc;
 	}
 	this()

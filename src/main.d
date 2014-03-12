@@ -12,14 +12,7 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=4;
-
-void exch(ref Indi a, ref Indi b)
-{
-	Indi c = a;
-	a = b;
-	b = c;
-}
+int MAX_DEPTH=5;
 
 int main()
 {
