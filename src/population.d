@@ -2,24 +2,22 @@ module Gen.Population;
 
 import std.random;
 import std.stdio;
+import std.algorithm;
 
 import Gen.Main;
 import Gen.Indi;
 import Gen.ExprTree;
 
-int getPos(Expr[] p, Expr t)
-{
-	for(int i=0;i<p.length;i++)
-		if(p[i]==t)
-			return i;
-	return -1;
-}
-
 Indi[] crossover(ref Indi[] couple,int tries = 0)
 {
+	writeln("m1");
 	Expr buff;
 	Expr q = couple[0].pickRand().node;
+	writeln("m2");
 	Expr[] niceNodes = couple[1].f.getNiceNodes(q.depth, q.height);
+	writeln("m3");
+	foreach(t;niceNodes)
+		writeln(t.print);
 	int n = uniform!"[)"(0,niceNodes.length);
 	Expr w = niceNodes[n];
 	buff = q;
@@ -49,9 +47,40 @@ Indi[] crossover(ref Indi[] couple,int tries = 0)
 
 class Population
 {
-	Indi[] pops;
-	void sort(){};
-	void reproduce(){};
-	void mutate(){};
-	void generate(){};
+	Indi[] populi;
+	double avrF;
+	void sortPopuli()
+	{
+		sort!("a.fit>b.fit")(populi);
+	};
+	void reproduce()
+	{
+
+	};
+	void mutate()
+	{
+
+	};
+	void generate(int num, int depth = MAX_DEPTH)
+	{
+		populi = [];
+		for(int i=0;i<num;i++)
+		{
+			populi~= new Indi(depth);
+		}
+	}
+	void calculate(double[][] data)
+	{
+		avrF = 0;
+		foreach(ind;populi)
+		{
+			avrF+=ind.fittness(data);
+		}
+		avrF=avrF/populi.length;
+		this.sortPopuli;
+	}
+	Indi getBest()
+	{
+		return populi[0];
+	}
 }
