@@ -12,12 +12,13 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=5;
+int MAX_DEPTH=1;
 
 int main()
 {
 	double[][] data = getData("testdata.csv");
 	VAR_NUM = data[0].length - 1;
+	writeln("VAR_NUM= ", VAR_NUM);
 	Indi indiana = new Indi(MAX_DEPTH);
 	Indi jones = new Indi(MAX_DEPTH);
 

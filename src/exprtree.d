@@ -16,6 +16,7 @@ struct ED
 	int depth;
 }
 
+
 static Expr getRandExpr(int depth)
 {
 	int a;
@@ -185,12 +186,15 @@ abstract class Expr:Expr_Int
 		Expr[] acc = [];
 		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
 		{
-			acc~=[this];
+			acc~=this;
 		}
 		foreach(p;params)
 			acc~=p.getNiceNodes(d,h);
 		if(acc.length==0)
-			return [this];
+		{
+			acc~=this;
+		}
+		writeln("acc= ",acc.length);
 		return acc;
 	}
 	this()
@@ -264,7 +268,7 @@ class Var:Expr
 		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
 			return [this];
 		else
-			return [];
+			return [this];
 	}
 	this()
 	{

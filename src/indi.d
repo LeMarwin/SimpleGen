@@ -10,6 +10,7 @@ class Indi
 	Expr f;
 	double[] variables;
 	int depth;
+	double fit;
 
 	double eval(double[] vars)
 	{
@@ -35,7 +36,8 @@ class Indi
 			double delta = f.eval(variables)-ans;
 			mse+=delta*delta;
 		}
-		return mse/data.length;
+		fit = mse/data.length;
+		return fit;
 	}
 	this(Expr _f)
 	{
