@@ -12,7 +12,7 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=1;
+int MAX_DEPTH=0;
 
 int main()
 {

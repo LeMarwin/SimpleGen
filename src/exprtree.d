@@ -108,9 +108,7 @@ abstract class Expr:Expr_Int
 			parent = this;
 		else
 			parent = par;
-
-		//parent = par; //!!!
-
+		
 		mynum = n;
 		depth = d;
 		offs = 0;

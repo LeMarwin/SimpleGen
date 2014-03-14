@@ -3,6 +3,7 @@ module Gen.Population;
 import std.random;
 import std.stdio;
 import std.algorithm;
+import std.array;
 
 import Gen.Main;
 import Gen.Indi;
@@ -49,17 +50,46 @@ class Population
 {
 	Indi[] populi;
 	double avrF;
+	bool sorted = false;
 	void sortPopuli()
 	{
 		sort!("a.fit>b.fit")(populi);
+		sorted = true;
 	};
-	void reproduce()
+	void reproduce(double eliteRate, double mutaRate)
 	{
+		if(!sorted)
+			sortPopuli;
+		Indi[] matingPool = [];
+		auto nextGen = appender!(Indi[])();
+		auto chances = appender!(double[])();
+		int getLucker()
+		{
+			double rs = uniform!"[]"(0.0,1.0);
+			double buff = 0;
+			for(int i = 0;i<chances.data.length;i++)
+			{
+				buff+=chances.data[i];
+				if(rs<buff)
+					return i;
+			}
+			return 0;
+		}
 
+		foreach(el;populi[0..cast(int)(1-eliteRate)*$])
+			nextGen~=el;
+		foreach(ind;populi)
+			chances.put(ind.fit/avrF);
+		for(int i=0;i<populi.length;i++)
+		{
+			nextGen.put(populi[getLucker]);
+		}
+
+		sorted = false;
 	};
 	void mutate()
 	{
-
+		// Seems like I don't need this
 	};
 	void generate(int num, int depth = MAX_DEPTH)
 	{
@@ -68,6 +98,7 @@ class Population
 		{
 			populi~= new Indi(depth);
 		}
+		sorted = false;
 	}
 	void calculate(double[][] data)
 	{
