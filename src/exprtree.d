@@ -244,7 +244,10 @@ class Leaf:Expr
 		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
 			return [this];
 		else
-			return [];
+			if(depth==0)
+				return [this];
+			else
+				return [];
 	}
 }
 
@@ -268,7 +271,10 @@ class Var:Expr
 		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
 			return [this];
 		else
-			return [this];
+			if(depth==0)
+				return [this];
+			else
+				return [];
 	}
 	this()
 	{
