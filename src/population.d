@@ -90,6 +90,7 @@ class Population
 	void mutate()
 	{
 		// Seems like I don't need this
+		// Who really checks this out?
 	};
 	void generate(int num, int depth = MAX_DEPTH)
 	{
