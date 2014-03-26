@@ -12,7 +12,7 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=0;
+int MAX_DEPTH=5;
 
 int main()
 {
@@ -36,28 +36,21 @@ int main()
 	writeln("========================================================");
 */ 
 	
-	writeln("========================================================");
-	writeln(indiana.print);
-	writeln("--------------------------------------------------------");
-	writeln(jones.print);
-	writeln("========================================================");
+	Population pops = new Population(10);
+	pops.generate(10);//
 
-
-//	Expr q = indiana.pickRand.node;
-//	Expr w = jones.pickRand.node;
-//	Indi buff = indiana;
-//	indiana = jones;
-//	jones = buff;
-
-
-	Indi[] nexgen = [indiana, jones];	// = crossover([indiana,jones]);
-	crossover(nexgen);
-	nexgen[0].f.recalcInnerParams();
-	nexgen[1].f.recalcInnerParams();
-	writeln("--------------------------------------------------------");
-	writeln(nexgen[0].print,"\t",nexgen[0].f.height);
-	writeln(nexgen[1].print,"\t",nexgen[0].f.height);
-
+	pops.calculate(data);
+	pops.sortPopuli;
+	pops.print;
+	writeln("+++++++++++++++++++++++++++++++++++++++=============");
+	for(long i=0;i<100;i++)
+	{
+		if(i%1000==0)
+			writeln(i,"\t", pops.avrF);
+		pops.reproduce(0.2,1);
+		pops.calculate(data);
+	}
+	pops.print;
 /*	NiceNodes test
 	Expr w = jones.pickRand.node;
 	writeln(jones.print);
