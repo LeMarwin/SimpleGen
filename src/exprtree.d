@@ -10,13 +10,6 @@ import std.typecons;
 
 import Gen.Main;
 
-struct ED
-{
-	Expr node;
-	int depth;
-}
-
-
 static Expr getRandExpr(int depth)
 {
 	int a;
@@ -78,7 +71,7 @@ interface Expr_Int
 	string name();
 	int offsprings();
 	int calcHeight();
-	ED pickRand(int d);
+	Expr pickRand();
 }
 
 abstract class Expr:Expr_Int
@@ -87,7 +80,6 @@ abstract class Expr:Expr_Int
 	Expr parent;
 	int p_num;
 	int offs;
-	int mynum;
 	int depth;
 	int height;
 	void generate(int depth)
@@ -103,13 +95,10 @@ abstract class Expr:Expr_Int
 	}
 	int recalcInnerParams(Expr par = null, int n = 0, int d = 0)
 	{
-
 		if(par is null)
 			parent = this;
 		else
 			parent = par;
-		
-		mynum = n;
 		depth = d;
 		offs = 0;
 		for(int i=0;i<p_num;i++)
@@ -144,26 +133,64 @@ abstract class Expr:Expr_Int
 		return res;
 	}
 
+	string printDepth()
+	{
+		string res;
+		if(p_num==0)
+		{
+			res = to!string(this.depth);
+		}
+		else
+		{
+			res = "("~to!string(this.depth);
+			foreach(p;params)
+			{
+				res~=" "~p.printDepth;
+			}
+			res~=")";
+		}
+		return res;
+	}
+
+	string printHeight()
+	{
+		string res;
+		if(p_num==0)
+		{
+			res = to!string(this.height);
+		}
+		else
+		{
+			res = "("~to!string(this.height);
+			foreach(p;params)
+			{
+				res~=" "~p.printHeight;
+			}
+			res~=")";
+		}
+		return res;
+	}	
+
 	int offsprings()
 	{
 		return offs;
 	}
 
-	ED pickRand(int d)
+	Expr pickRand()
 	{
 		double t = uniform!"[]"(0.0,1.0);
 		double buff = 1.0/offs;
 		if(t<buff)
 		{
-			return ED(this,d);
+			return this;
 		}
 		foreach(p;params)
 		{
 			buff+=cast(double)p.offsprings/offs;
 			if(t<buff)
-				return p.pickRand(d+1);
+				return p.pickRand();
 		}
-		return ED(this,d);
+		return this;
 	}
 	int calcHeight()
 	{
@@ -182,17 +209,12 @@ abstract class Expr:Expr_Int
 	Expr[] getNiceNodes(int d, int h)
 	{
 		Expr[] acc = [];
-		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+		if((depth<=MAX_DEPTH-h)&&(height<=MAX_DEPTH-d))
 		{
 			acc~=this;
 		}
 		foreach(p;params)
 			acc~=p.getNiceNodes(d,h);
-		if(acc.length==0)
-		{
-			acc~=this;
-		}
-		writeln("acc= ",acc.length);
 		return acc;
 	}
 	this()
@@ -239,13 +261,9 @@ class Leaf:Expr
 	}
 	override Expr[] getNiceNodes(int d, int h)
 	{
-		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+		if((depth<=MAX_DEPTH-h)&&(height<=MAX_DEPTH-d))
 			return [this];
-		else
-			if(depth==0)
-				return [this];
-			else
-				return [];
+		return [];
 	}
 }
 
@@ -266,13 +284,9 @@ class Var:Expr
 	}
 	override Expr[] getNiceNodes(int d, int h)
 	{
-		if((depth<MAX_DEPTH-h)&&(height<MAX_DEPTH-d))
+		if((depth<=MAX_DEPTH-h)&&(height<=MAX_DEPTH-d))
 			return [this];
-		else
-			if(depth==0)
-				return [this];
-			else
-				return [];
+		return [];
 	}
 	this()
 	{

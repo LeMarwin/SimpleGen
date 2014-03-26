@@ -4,30 +4,25 @@ import std.random;
 import std.stdio;
 import std.algorithm;
 import std.array;
+import std.math;
+import std.typecons;
 
 import Gen.Main;
 import Gen.Indi;
 import Gen.ExprTree;
 
-Indi[] crossover(ref Indi[] couple,int tries = 0)
+Indi[] crossover(ref Indi p1, ref Indi p2 ,int tries = 0)
 {
-	writeln("m1");
 	Expr buff;
-	Expr q = couple[0].pickRand().node;
-	writeln("m2");
-	Expr[] niceNodes = couple[1].f.getNiceNodes(q.depth, q.height);
-	writeln("m3");
-	foreach(t;niceNodes)
-		writeln(t.print);
+	Expr q = p1.pickRand();
+	Expr[] niceNodes = p2.f.getNiceNodes(q.depth, q.height);
 	int n = uniform!"[)"(0,niceNodes.length);
 	Expr w = niceNodes[n];
 	buff = q;
-	writeln("q = ",q.print);
-	writeln("w = ",w.print);
-	if(q==couple[0].f)
-		couple[0].f=w;
-	if(w==couple[1].f)
-		couple[1].f=buff;
+	if(q==p1.f)
+		p1.f=w;
+	if(w==p2.f)
+		p2.f=buff;
 	Expr[] tempPar = [];
 	foreach(p;q.parent.params)
 		if(q==p)
@@ -35,7 +30,6 @@ Indi[] crossover(ref Indi[] couple,int tries = 0)
 		else
 			tempPar~=p;
 	q.parent.params = tempPar;
-
 	tempPar = [];
 	foreach(p;w.parent.params)
 		if(w==p)
@@ -43,49 +37,59 @@ Indi[] crossover(ref Indi[] couple,int tries = 0)
 		else
 			tempPar~=p;
 	w.parent.params = tempPar;
-	return [new Indi(couple[0].f), new Indi(couple[1].f)];
+	return [new Indi(p1.f), new Indi(p2.f)];
+}
+
+int getLucker(double[] chances)
+{
+	double rs = uniform!"[]"(0.0,1.0);
+	double buff = 0;
+	for(int i = 0;i<chances.length;i++)
+	{
+		buff+=chances[i];
+		if(rs<buff)
+			return i;
+	}
+	return 0;
 }
 
 class Population
 {
 	Indi[] populi;
 	double avrF;
-	bool sorted = false;
 	void sortPopuli()
 	{
 		sort!("a.fit>b.fit")(populi);
-		sorted = true;
 	};
 	void reproduce(double eliteRate, double mutaRate)
 	{
-		if(!sorted)
-			sortPopuli;
-		Indi[] matingPool = [];
-		auto nextGen = appender!(Indi[])();
-		auto chances = appender!(double[])();
-		int getLucker()
-		{
-			double rs = uniform!"[]"(0.0,1.0);
-			double buff = 0;
-			for(int i = 0;i<chances.data.length;i++)
-			{
-				buff+=chances.data[i];
-				if(rs<buff)
-					return i;
-			}
-			return 0;
-		}
+		int n = populi.length;
+		int m = cast(int)(eliteRate*populi.length);
+		Indi[] matingPool = uninitializedArray!(Indi[])(n-m);
+		double[] chances = uninitializedArray!(double[])(n);
+		Indi[] nextGen = uninitializedArray!(Indi[])(n);
 
-		foreach(el;populi[0..cast(int)(1-eliteRate)*$])
-			nextGen~=el;
-		foreach(ind;populi)
-			chances.put(ind.fit/avrF);
-		for(int i=0;i<populi.length;i++)
+		foreach(int i,ind;populi)
+			chances[i] = ind.fit/(avrF*populi.length);
+		for(int i=0;i<m;i++)
 		{
-			nextGen.put(populi[getLucker]);
+			nextGen[i]=populi[i];
 		}
-
-		sorted = false;
+		int i = m;
+		Indi p1, p2;
+		Indi[] buff;
+		while(i<n)
+		{
+			p1 = populi[getLucker(chances)];
+			p2 = populi[getLucker(chances)];
+			buff = crossover(p1,p2);
+			nextGen[i] = buff[0];
+			if((i+1)<n)
+				nextGen[i+1] = buff[1];
+			i+=2;
+		}
+		destroy(populi);
+		populi = nextGen;
 	};
 	void mutate()
 	{
@@ -94,25 +98,50 @@ class Population
 	};
 	void generate(int num, int depth = MAX_DEPTH)
 	{
+		destroy(populi);
 		populi = [];
 		for(int i=0;i<num;i++)
 		{
 			populi~= new Indi(depth);
 		}
-		sorted = false;
 	}
 	void calculate(double[][] data)
 	{
 		avrF = 0;
+		double mseSum = 0;
+		int n = 0;
 		foreach(ind;populi)
 		{
-			avrF+=ind.fittness(data);
+			ind.meanSquareError(data);
+			if(!isNaN(ind.mse))
+			{
+				mseSum+=ind.mse;
+				ind.fit = 1/ind.mse;
+				avrF+=ind.fit;
+				n++;
+			}
+			else 
+				ind.fit = 0;
 		}
-		avrF=avrF/populi.length;
+		avrF=avrF/n;
 		this.sortPopuli;
 	}
 	Indi getBest()
 	{
 		return populi[0];
+	}
+	void print()
+	{
+		foreach(int i, Indi p;populi)
+			writeln(i,"\t",p.fit,"\t",p.print);
+		writeln(avrF);
+	}
+	this()
+	{
+
+	}
+	this(int n)
+	{
+		generate(n);
 	}
 }

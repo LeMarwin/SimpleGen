@@ -11,7 +11,7 @@ class Indi
 	double[] variables;
 	int depth;
 	double fit;
-
+	double mse;
 	double eval(double[] vars)
 	{
 		return f.eval(vars);
@@ -24,11 +24,11 @@ class Indi
 	{
 		return variables;
 	}
-	double fittness(double[][] data)
+	double meanSquareError(double[][] data)
 	{
 		double[][] buff = data.dup;
 		double ans = 0;
-		double mse = 0;
+		mse = 0;
 		for(int i=0;i<data.length;i++)
 		{
 			variables = buff[i][0..$-1];
@@ -36,8 +36,8 @@ class Indi
 			double delta = f.eval(variables)-ans;
 			mse+=delta*delta;
 		}
-		fit = mse/data.length;
-		return fit;
+		mse = mse/data.length;
+		return mse;
 	}
 	this(Expr _f)
 	{
@@ -51,13 +51,13 @@ class Indi
 	}
 	void mutate()
 	{
-		ED temp = f.pickRand(0);
-		temp.node.generate(MAX_DEPTH-temp.depth);
+		Expr temp = f.pickRand();
+		temp.generate(MAX_DEPTH-temp.depth);
 		f.recalcInnerParams();
 	}
-	ED pickRand()
+	Expr pickRand()
 	{
-		return f.pickRand(0);
+		return f.pickRand();
 	}
 	string print()
 	{
