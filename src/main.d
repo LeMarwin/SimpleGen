@@ -12,12 +12,12 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=5;
+int MAX_DEPTH=3;
 
 int main()
 {
 	double[][] data = getData("testdata.csv");
-	VAR_NUM = data[0].length - 1;
+	VAR_NUM = cast(int)data[0].length - 1;
 	writeln("VAR_NUM= ", VAR_NUM);
 	Indi indiana = new Indi(MAX_DEPTH);
 	Indi jones = new Indi(MAX_DEPTH);
@@ -35,22 +35,45 @@ int main()
 	writeln("fittness = ", jones.fittness(data));
 	writeln("========================================================");
 */ 
-	
-	Population pops = new Population(10);
-	pops.generate(10);//
 
+	Indi a = new Indi(3);
+	Indi b = new Indi(3);
+	writeln("a\t",a.print);
+	writeln("b\t",b.print);
+	b.mutate();
+	writeln("bm\t",b.print);
+	Indi[] buf = crossover(a,b);
+	writeln("bf1\t",buf[0].print);
+	writeln("bf2\t",buf[1].print);
+	Expr f = a.pickRand();
+	writeln(a.depth);
+
+	Population pops = new Population(15);
 	pops.calculate(data);
-	pops.sortPopuli;
 	pops.print;
-	writeln("+++++++++++++++++++++++++++++++++++++++=============");
-	for(long i=0;i<100;i++)
+	auto w = readln();
+	double bestfit=0;
+	Indi bestie;
+	for(long i=0;i<1000000000;i++)
 	{
-		if(i%1000==0)
-			writeln(i,"\t", pops.avrF);
-		pops.reproduce(0.2,1);
 		pops.calculate(data);
+		if(pops.avrF>bestfit)
+		{
+			bestfit = pops.avrF;
+			bestie = pops.getBest().dup;
+		}
+		if(i%1000==0)
+		{
+			writeln(i,"-th generation");
+			pops.print;
+		}
+		pops.reproduce(0.2,0.3);
 	}
+	pops.calculate(data);
 	pops.print;
+	
+	writeln(bestie.fit);
+	writeln(bestie.print);
 /*	NiceNodes test
 	Expr w = jones.pickRand.node;
 	writeln(jones.print);

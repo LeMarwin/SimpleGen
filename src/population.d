@@ -13,31 +13,46 @@ import Gen.ExprTree;
 
 Indi[] crossover(ref Indi p1, ref Indi p2 ,int tries = 0)
 {
-	Expr buff;
-	Expr q = p1.pickRand();
-	Expr[] niceNodes = p2.f.getNiceNodes(q.depth, q.height);
-	int n = uniform!"[)"(0,niceNodes.length);
+	Expr f1 = p1.f.dup;
+	Expr f2 = p2.f.dup;
+	Expr r1,r2;
+	f1.recalcInnerParams();
+	f2.recalcInnerParams();
+	Expr q = f1.pickRand();
+	Expr[] niceNodes = f2.getNiceNodes(q.depth, q.height);
+	if(niceNodes.length==0)
+	{
+		writeln("f1\t",f1.print);
+		writeln(f1.printOffs);
+		writeln("f2\t",f2.print);
+		writeln("q\t",q.print);
+		writeln(q.depth,"\t", q.height);
+		writeln(f2.printDepth);
+		writeln(f2.printHeight);
+		assert(false);
+	}
+	int n = uniform!"[)"(0,cast(int)niceNodes.length);
 	Expr w = niceNodes[n];
-	buff = q;
-	if(q==p1.f)
-		p1.f=w;
-	if(w==p2.f)
-		p2.f=buff;
-	Expr[] tempPar = [];
-	foreach(p;q.parent.params)
-		if(q==p)
-			tempPar~=w;
-		else
-			tempPar~=p;
-	q.parent.params = tempPar;
-	tempPar = [];
-	foreach(p;w.parent.params)
-		if(w==p)
-			tempPar~=buff;
-		else
-			tempPar~=p;
-	w.parent.params = tempPar;
-	return [new Indi(p1.f), new Indi(p2.f)];
+	if(f1==q&&f2==w)
+	{
+		return [new Indi(f2), new Indi(f1)];
+	}
+	if(f1==q)
+	{
+		f1 = w;
+		w.parent.params[w.place] = q;
+		return [new Indi(f1), new Indi(f2)];
+	}
+	if(f2==w)
+	{
+		f2 = q;
+		q.parent.params[q.place] = w;
+		return [new Indi(f1), new Indi(f2)];
+	}
+	Expr buff = q;
+	q.parent.params[q.place]=w;
+	w.parent.params[w.place]=buff;
+	return [new Indi(f1), new Indi(f2)];
 }
 
 int getLucker(double[] chances)
@@ -63,8 +78,9 @@ class Population
 	};
 	void reproduce(double eliteRate, double mutaRate)
 	{
-		int n = populi.length;
-		int m = cast(int)(eliteRate*populi.length);
+		int n = cast(int)populi.length;
+		int m = cast(int)(eliteRate*n);
+		int mut = cast(int)(mutaRate*n);
 		Indi[] matingPool = uninitializedArray!(Indi[])(n-m);
 		double[] chances = uninitializedArray!(double[])(n);
 		Indi[] nextGen = uninitializedArray!(Indi[])(n);
@@ -82,7 +98,11 @@ class Population
 		{
 			p1 = populi[getLucker(chances)];
 			p2 = populi[getLucker(chances)];
+//			writeln("p1\t",p1.print);
+//			writeln("p2\t",p2.print);
 			buff = crossover(p1,p2);
+//			writeln("b1\t",buff[0].print);
+//			writeln("b2\t",buff[1].print);
 			nextGen[i] = buff[0];
 			if((i+1)<n)
 				nextGen[i+1] = buff[1];
@@ -90,11 +110,10 @@ class Population
 		}
 		destroy(populi);
 		populi = nextGen;
-	};
-	void mutate()
-	{
-		// Seems like I don't need this
-		// Who really checks this out?
+		n = cast(int)populi.length;
+		assert(n!=0);
+		for(int j=0;j<mut;j++)
+			populi[uniform!"[)"(0,n)].mutate();
 	};
 	void generate(int num, int depth = MAX_DEPTH)
 	{

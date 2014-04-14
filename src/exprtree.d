@@ -10,16 +10,16 @@ import std.typecons;
 
 import Gen.Main;
 
-static Expr getRandExpr(int depth)
+static Expr getRandExpr(int depth, int _pl=0)
 {
 	int a;
-	if(depth == 0)
+	if(depth == 1)
 		a = uniform!"[]"(0,1);
 	else
 	{
-		if(uniform!"[]"(0.0,1.0)>0.3)
+		if(uniform!"[]"(0.0,1.0)>0.05)
 		{
-			a = uniform!"[]"(0,10);
+			a = uniform!"[]"(1,9);
 		}
 	}
 
@@ -28,50 +28,38 @@ static Expr getRandExpr(int depth)
 	final switch(a)
 	{
 		case 0:
-			return new Leaf();
-			break;
+			return new Leaf(_pl);
 		case 1:
-			return new Var();
-			break;
+			return new Var(_pl);
 		case 2:
-			return new Plus(depth-1);
-			break;
+			return new Plus(depth-1,_pl);
 		case 3:
-			return new Minus(depth-1);
-			break;
+			return new Minus(depth-1,_pl);
 		case 4:
-			return new Multiply(depth-1);
-			break;
+			return new Multiply(depth-1,_pl);
 		case 5:
-			return new Divide(depth-1);
-			break;
+			return new Divide(depth-1,_pl);
 		case 6:
-			return new Sin(depth-1);
-			break;
+			return new Sin(depth-1,_pl);
 		case 7:
-			return new Cos(depth-1);
-			break;
+			return new Cos(depth-1,_pl);
 		case 8:
-			return new Sqr(depth-1);
-			break;
+			return new Pow(depth-1,_pl);
 		case 9:
-			return new Sqrt(depth-1);
-			break;
-		case 10:
-			return new Pow(depth-1);
-			break;
+			return new Sqrt(depth-1,_pl);
 	}
 }
 
 interface Expr_Int
 {
 	double eval(double[] vars);
-	void generate(int depth);
+	void generate(int depth, int _pl=0);
 	string print();
 	string name();
 	int offsprings();
 	int calcHeight();
 	Expr pickRand();
+	Expr dup();
 }
 
 abstract class Expr:Expr_Int
@@ -82,18 +70,20 @@ abstract class Expr:Expr_Int
 	int offs;
 	int depth;
 	int height;
-	void generate(int depth)
+	int place;
+	void generate(int depth, int _pl=0)
 	{
+		place = _pl;
 		params = [];
 		offs = 0;
 		for(int i=0;i<p_num;i++)
 		{
-			params~=getRandExpr(depth);
+			params~=getRandExpr(depth,i);
 			offs+=params[i].offsprings;
 		}
 		offs++;
 	}
-	int recalcInnerParams(Expr par = null, int n = 0, int d = 0)
+	int recalcInnerParams(Expr par = null, int n = 0, int d = 1)
 	{
 		if(par is null)
 			parent = this;
@@ -101,6 +91,7 @@ abstract class Expr:Expr_Int
 			parent = par;
 		depth = d;
 		offs = 0;
+		place = n;
 		for(int i=0;i<p_num;i++)
 		{
 			offs+=params[i].recalcInnerParams(this, i, d+1);
@@ -109,9 +100,9 @@ abstract class Expr:Expr_Int
 		height = calcHeight;
 		return offs;
 	}
-	this(int depth)
+	this(int depth, int _pl)
 	{
-		this.generate(depth);
+		this.generate(depth, _pl);
 	}
 
 	string print()
@@ -152,6 +143,24 @@ abstract class Expr:Expr_Int
 		return res;
 	}
 
+	string printOffs()
+	{
+		string res;
+		if(p_num==0)
+		{
+			res = to!string(this.offs);
+		}
+		else
+		{
+			res = "("~to!string(this.offs);
+			foreach(p;params)
+			{
+				res~=" "~p.printOffs;
+			}
+			res~=")";
+		}
+		return res;
+	}
 	string printHeight()
 	{
 		string res;
@@ -223,21 +232,6 @@ abstract class Expr:Expr_Int
 	}
 }
 
-class Plus:Expr
-{
-	string name()
-		{return "+";}
-	double eval(double[] vars)
-	{
-		return params[0].eval(vars)+params[1].eval(vars);
-	}
-	this(int a)
-	{
-		this.p_num = 2;
-		super(a);
-	}
-}
-
 class Leaf:Expr
 {
 	double value;
@@ -249,15 +243,22 @@ class Leaf:Expr
 	{
 		return value;
 	}
-	override void generate(int depth)
+	override void generate(int depth, int _pl)
 	{
+		place = _pl;
 		value = uniform!"[]"(0.0,10.0);
 	}
-	this()
+	Expr dup()
+	{
+		Leaf res = new Leaf(place);
+		res.value = value; 
+		return res;
+	}
+	this(int _pl)
 	{
 		p_num = 0;
 		offs = 1;
-		this.generate(0);
+		this.generate(0, _pl);
 	}
 	override Expr[] getNiceNodes(int d, int h)
 	{
@@ -270,8 +271,9 @@ class Leaf:Expr
 class Var:Expr
 {
 	int num;
-	override void generate(int depth)
+	override void generate(int depth, int _pl)
 	{
+		place = _pl;
 		num = uniform!"[)"(0,VAR_NUM);
 	}
 	string name()
@@ -282,18 +284,49 @@ class Var:Expr
 	{
 		return variables[num];
 	}
+	Expr dup()
+	{
+		Var res = new Var(place);
+		res.num = num;
+		return res;
+	}
 	override Expr[] getNiceNodes(int d, int h)
 	{
 		if((depth<=MAX_DEPTH-h)&&(height<=MAX_DEPTH-d))
 			return [this];
 		return [];
 	}
-	this()
+	this(int _pl)
 	{
 		p_num = 0;
 		offs = 1;
-		this.generate(0);
+		this.generate(0,_pl);
 	}
+}
+
+class Plus:Expr
+{
+	string name()
+		{return "+";}
+	double eval(double[] vars)
+	{
+		return params[0].eval(vars)+params[1].eval(vars);
+	}
+	Expr dup()
+	{
+		Plus res = new Plus();
+		res.params = [];
+		res.p_num = 2;
+		foreach(p;this.params)
+			res.params~=p.dup;
+		return res;
+	}
+	this(int a, int _pl)
+	{
+		this.p_num = 2;
+		super(a,_pl);
+	}
+	this(){}
 }
 
 class Minus:Expr
@@ -302,15 +335,23 @@ class Minus:Expr
 	{
 		return "-";
 	}
+	Expr dup()
+	{
+		Minus res = new Minus();
+		res.p_num = 2;
+		res.params = [params[0].dup,params[1].dup];
+		return res;
+	}
 	double eval(double[] variables)
 	{
 		return params[0].eval(variables) - params[1].eval(variables);
 	}
-	this(int a)
+	this(int a, int _pl)
 	{
 		p_num = 2;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Multiply:Expr
@@ -319,15 +360,23 @@ class Multiply:Expr
 	{
 		return "*";
 	}
+	Expr dup()
+	{
+		Multiply res = new Multiply();
+		res.p_num = 2;
+		res.params = [params[0].dup,params[1].dup];
+		return res;
+	}
 	double eval(double[] variables)
 	{
 		return params[0].eval(variables)*params[1].eval(variables);
 	}
-	this(int a)
+	this(int a, int _pl)
 	{
 		p_num = 2;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Divide:Expr 
@@ -340,15 +389,23 @@ class Divide:Expr
 		else
 			return params[0].eval(variables)/t;
 	}
+	Expr dup()
+	{
+		Divide res = new Divide();
+		res.p_num = 2;
+		res.params = [params[0].dup,params[1].dup];
+		return res;
+	}
 	string name()
 	{
 		return "/";
 	}
-	this(int a)
+	this(int a,int _pl)
 	{
 		p_num = 2;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Sin:Expr
@@ -361,11 +418,19 @@ class Sin:Expr
 	{
 		return sin(params[0].eval(variables));
 	}
-	this(int a)
+	Expr dup()
+	{
+		Sin res = new Sin();
+		res.p_num = 1;
+		res.params = [params[0].dup];
+		return res;
+	}
+	this(int a,int _pl)
 	{
 		p_num = 1;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Cos:Expr
@@ -378,11 +443,19 @@ class Cos:Expr
 	{
 		return cos(params[0].eval(variables));
 	}
-	this(int a)
+	Expr dup()
+	{
+		Cos res = new Cos();
+		res.p_num = 1;
+		res.params = [params[0].dup];
+		return res;
+	}
+	this(int a, int _pl)
 	{
 		p_num = 1;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Sqr:Expr
@@ -396,11 +469,19 @@ class Sqr:Expr
 		double t = params[0].eval(variables);
 		return t*t;
 	}
-	this(int a)
+	Expr dup()
+	{
+		Sqr res = new Sqr();
+		res.p_num = 1;
+		res.params = [params[0].dup];
+		return res;
+	}
+	this(int a, int _pl)
 	{
 		p_num = 1;
-		super(a);
+		super(a,_pl);
 	}
+	this(){}
 }
 
 class Sqrt:Expr
@@ -413,11 +494,19 @@ class Sqrt:Expr
 	{
 		return sqrt(params[0].eval(variables));
 	}
-	this(int a)
+	Expr dup()
+	{
+		Sqrt res = new Sqrt();
+		res.p_num = 1;
+		res.params = [params[0].dup];
+		return res;
+	}
+	this(int a, int _pl)
 	{
 		p_num = 1;
-		super(a);
+		super(a, _pl);
 	}
+	this(){}
 }
 
 class Pow:Expr
@@ -430,9 +519,17 @@ class Pow:Expr
 	{
 		return params[0].eval(variables)^^params[1].eval(variables);
 	}
-	this(int a)
+	Expr dup()
+	{
+		Pow res = new Pow();
+		res.p_num = 2;
+		res.params = [params[0].dup, params[1].dup];
+		return res;
+	}
+	this(int a, int _pl)
 	{
 		p_num = 2;
-		super(a);
+		super(a, _pl);
 	}
+	this(){}
 }

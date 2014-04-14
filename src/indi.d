@@ -67,4 +67,13 @@ class Indi
 	{
 		return f.height;
 	}
+	Indi dup()
+	{
+		Indi res = new Indi(f.dup);
+		res.fit = fit;
+		res.mse = mse;
+		res.depth = depth;
+
+		return(res);
+	}
 }
