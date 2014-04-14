@@ -12,7 +12,7 @@ import Gen.ExprTree;
 import Gen.Population;
 
 int VAR_NUM;
-int MAX_DEPTH=3;
+int MAX_DEPTH=8;
 
 int main()
 {
@@ -48,13 +48,13 @@ int main()
 	Expr f = a.pickRand();
 	writeln(a.depth);
 
-	Population pops = new Population(15);
+	Population pops = new Population(10);
 	pops.calculate(data);
 	pops.print;
 	auto w = readln();
 	double bestfit=0;
 	Indi bestie;
-	for(long i=0;i<1000000000;i++)
+	for(long i=0;i<1000000;i++)
 	{
 		pops.calculate(data);
 		if(pops.avrF>bestfit)

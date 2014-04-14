@@ -113,7 +113,7 @@ class Population
 		n = cast(int)populi.length;
 		assert(n!=0);
 		for(int j=0;j<mut;j++)
-			populi[uniform!"[)"(0,n)].mutate();
+			populi[uniform!"[)"(m,n)].mutate();
 	};
 	void generate(int num, int depth = MAX_DEPTH)
 	{
