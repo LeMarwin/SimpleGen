@@ -5,18 +5,30 @@ import std.string;
 import std.functional;
 import std.math;
 import std.typecons;
+import std.array;
+import std.algorithm;
+import std.conv;
 
 import Gen.CsvParse;
 import Gen.Indi;
 import Gen.ExprTree;
 import Gen.Population;
+import Gen.Parameters;
 
 int VAR_NUM;
-int MAX_DEPTH=8;
+int MAX_DEPTH=3;
 
-int main()
+
+int main(string[] args)
 {
-	double[][] data = getData("testdata.csv");
+	const Parameters p = parseArgs(args);
+	if(p.filename == "halp!")
+		return 0;
+	MAX_DEPTH = p.depth;
+
+
+
+	double[][] data = getData(p.filename);
 	VAR_NUM = cast(int)data[0].length - 1;
 	writeln("VAR_NUM= ", VAR_NUM);
 	Indi indiana = new Indi(MAX_DEPTH);
@@ -36,21 +48,7 @@ int main()
 	writeln("========================================================");
 */ 
 
-	Indi a = new Indi(3);
-	Indi b = new Indi(3);
-	writeln("a\t",a.print);
-	writeln("b\t",b.print);
-	b.mutate();
-	writeln("bm\t",b.print);
-	Indi[] buf = crossover(a,b);
-	writeln("bf1\t",buf[0].print);
-	writeln("bf2\t",buf[1].print);
-	Expr f = a.pickRand();
-	writeln(a.depth);
-
-	Population pops = new Population(10);
-	pops.calculate(data);
-	pops.print;
+	Population pops = new Population(p.size);
 	auto w = readln();
 	double bestfit=0;
 	Indi bestie;
@@ -66,8 +64,10 @@ int main()
 		{
 			writeln(i,"-th generation");
 			pops.print;
+			if(pops.getBest().fit>p.targetFit)
+				break;
 		}
-		pops.reproduce(0.2,0.3);
+		pops.reproduce(p.elitesRate,p.mutationRate);
 	}
 	pops.calculate(data);
 	pops.print;
