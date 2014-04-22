@@ -6,10 +6,11 @@ import std.algorithm;
 
 struct Parameters
 {
-	int depth;
 	string filename;
-	double targetFit;
+	int depth;
 	int size;
+	int gens;
+	double targetFit;
 	double mutationRate;
 	double elitesRate;
 }
@@ -38,6 +39,8 @@ static Parameters parseArgs(string[] args)
 		"          \t Examples: '0.05', '5e-02'\n\n"~
 		"-s <value>\t Size of the population.\n"~
 		"          \t Must be valid integer. Default = 10\n\n"~
+		"-g <value>\t Maximum number of generations.\n"~
+		"          \t Must be valid integer. Default = 1000000\n\n"~
 		"-m <value>\t Mutation rate.\n"~
 		"          \t Must be valid double. Default = 0.3\n\n"~
 		"-l <value>\t Elites rate.\n"~
@@ -69,6 +72,17 @@ static Parameters parseArgs(string[] args)
 		res.depth = 3;
 	}
 
+//	GENERATONS
+	buff = find(args, "-g");
+	if(buff.length>=2)
+	{	
+	res.gens = to!int(buff[1]);
+	}	
+	else
+	{
+		writeln("No generation number provided. Add '-g value'.\n Default value = 1000000");
+		res.gens = 1000000;
+	}
 //	FILENAME
 	buff = find(args, "-f");
 	if(buff.length>=2)
@@ -89,7 +103,7 @@ static Parameters parseArgs(string[] args)
 	}	
 	else
 	{
-		writeln("No error value provided. Remove '-e', or add value.\n Default value = 5e-02");
+		writeln("No error value provided. Add '-e value'.\n Default value = 5e-02");
 		res.targetFit = 1/0.05;
 	}
 
@@ -101,7 +115,7 @@ static Parameters parseArgs(string[] args)
 	}	
 	else
 	{
-		writeln("No population size provided. Remove '-s', or add value.\n Default value = 10");
+		writeln("No population size provided. Add '-s value'.\n Default value = 10");
 		res.size = 10;
 	}
 
@@ -113,7 +127,7 @@ static Parameters parseArgs(string[] args)
 	}	
 	else
 	{
-		writeln("No mutation rate provided. Remove '-m', or add value.\n Default value = 0.3");
+		writeln("No mutation rate provided. Add '-m value'.\n Default value = 0.3");
 		res.mutationRate = 0.3;
 	}
 
@@ -125,7 +139,7 @@ static Parameters parseArgs(string[] args)
 	}	
 	else
 	{
-		writeln("No elites rate provided. Remove '-l', or add value.\n Default value = 0.2");
+		writeln("No elites rate provided. Add '-l value'.\n Default value = 0.2");
 		res.elitesRate = 0.2;
 	}
 //

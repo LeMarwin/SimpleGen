@@ -22,14 +22,7 @@ Indi[] crossover(ref Indi p1, ref Indi p2 ,int tries = 0)
 	Expr[] niceNodes = f2.getNiceNodes(q.depth, q.height);
 	if(niceNodes.length==0)
 	{
-		writeln("f1\t",f1.print);
-		writeln(f1.printOffs);
-		writeln("f2\t",f2.print);
-		writeln("q\t",q.print);
-		writeln(q.depth,"\t", q.height);
-		writeln(f2.printDepth);
-		writeln(f2.printHeight);
-		assert(false);
+		assert(false, "niceNodes==0");
 	}
 	int n = uniform!"[)"(0,cast(int)niceNodes.length);
 	Expr w = niceNodes[n];

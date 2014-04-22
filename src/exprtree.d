@@ -23,8 +23,6 @@ static Expr getRandExpr(int depth, int _pl=0)
 		}
 	}
 
- 	// ^ done so there will be more final nodes, than non-final nodes
-
 	final switch(a)
 	{
 		case 0:
@@ -123,62 +121,6 @@ abstract class Expr:Expr_Int
 		}
 		return res;
 	}
-
-	string printDepth()
-	{
-		string res;
-		if(p_num==0)
-		{
-			res = to!string(this.depth);
-		}
-		else
-		{
-			res = "("~to!string(this.depth);
-			foreach(p;params)
-			{
-				res~=" "~p.printDepth;
-			}
-			res~=")";
-		}
-		return res;
-	}
-
-	string printOffs()
-	{
-		string res;
-		if(p_num==0)
-		{
-			res = to!string(this.offs);
-		}
-		else
-		{
-			res = "("~to!string(this.offs);
-			foreach(p;params)
-			{
-				res~=" "~p.printOffs;
-			}
-			res~=")";
-		}
-		return res;
-	}
-	string printHeight()
-	{
-		string res;
-		if(p_num==0)
-		{
-			res = to!string(this.height);
-		}
-		else
-		{
-			res = "("~to!string(this.height);
-			foreach(p;params)
-			{
-				res~=" "~p.printHeight;
-			}
-			res~=")";
-		}
-		return res;
-	}	
 
 	int offsprings()
 	{
