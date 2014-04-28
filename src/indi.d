@@ -16,10 +16,6 @@ class Indi
 	{
 		return f.eval(vars);
 	}
-	int offsprings()
-	{
-		return f.offsprings;
-	}
 	double[] getVariables()
 	{
 		return variables;
@@ -62,10 +58,6 @@ class Indi
 	string print()
 	{
 		return f.print;	
-	}
-	int height()
-	{
-		return f.height;
 	}
 	Indi dup()
 	{

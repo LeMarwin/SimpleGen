@@ -11,7 +11,7 @@ import Gen.Main;
 import Gen.Indi;
 import Gen.ExprTree;
 
-Indi[] crossover(ref Indi p1, ref Indi p2 ,int tries = 0)
+Indi[] crossingover(ref Indi p1, ref Indi p2)
 {
 	Expr f1 = p1.f.dup;
 	Expr f2 = p2.f.dup;
@@ -91,11 +91,7 @@ class Population
 		{
 			p1 = populi[getLucker(chances)];
 			p2 = populi[getLucker(chances)];
-//			writeln("p1\t",p1.print);
-//			writeln("p2\t",p2.print);
-			buff = crossover(p1,p2);
-//			writeln("b1\t",buff[0].print);
-//			writeln("b2\t",buff[1].print);
+			buff = crossingover(p1,p2);
 			nextGen[i] = buff[0];
 			if((i+1)<n)
 				nextGen[i+1] = buff[1];

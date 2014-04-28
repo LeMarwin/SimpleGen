@@ -11,7 +11,6 @@ import std.conv;
 
 import Gen.CsvParse;
 import Gen.Indi;
-import Gen.ExprTree;
 import Gen.Population;
 import Gen.Parameters;
 
@@ -28,10 +27,9 @@ int main(string[] args)
 
 	double[][] data = getData(p.filename);
 	VAR_NUM = cast(int)data[0].length - 1;
-	Indi indiana = new Indi(MAX_DEPTH);
-	Indi jones = new Indi(MAX_DEPTH);
 
 	Population pops = new Population(p.size);
+	writeln("Press any key to continue");
 	auto w = readln();
 	double bestfit=0;
 	Indi bestie;
